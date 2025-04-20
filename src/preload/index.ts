@@ -1,7 +1,13 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 
 // Whitelist of valid channels used for IPC communication (Send message from Renderer to Main)
-const mainAvailChannels: string[] = ['msgRequestGetVersion', 'msgOpenExternalLink', 'msgOpenFile']
+const mainAvailChannels: string[] = [
+  'msgRequestGetVersion', 
+  'msgOpenExternalLink', 
+  'msgOpenFile',
+  'getConfigFile',
+  'updateConfigFile'
+]
 const rendererAvailChannels: string[] = []
 
 type AsyncFunction = (..._args: any[]) => Promise<any>
@@ -111,3 +117,8 @@ async function exposeAPIs() {
 }
 
 exposeAPIs()
+
+contextBridge.exposeInMainWorld('configFileApi', {
+  getConfig: async () => await ipcRenderer.invoke('getConfigFile'),
+  updateConfig: async (content) => await ipcRenderer.invoke('updateConfigFile', content)
+})

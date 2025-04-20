@@ -1,6 +1,7 @@
 import { ipcMain, shell, IpcMainEvent, dialog } from 'electron'
 import Constants from './utils/Constants'
 import { Client, capabilitySchemas } from './mcp/types'
+import { readFileSync, writeFileSync } from 'fs'
 
 import { manageRequests } from './mcp/client'
 
@@ -32,6 +33,28 @@ export default class IPCs {
         filters
       })
       return dialogResult
+    })
+
+    // Get config file content
+    ipcMain.handle('getConfigFile', () => {
+      try {
+        const configContent = readFileSync(Constants.ASSETS_PATH.config, 'utf8')
+        return configContent
+      } catch (error) {
+        console.error('Error reading config file:', error)
+        return null
+      }
+    })
+
+    // Update config file content
+    ipcMain.handle('updateConfigFile', (event, content) => {
+      try {
+        writeFileSync(Constants.ASSETS_PATH.config, content, 'utf8')
+        return { success: true }
+      } catch (error) {
+        console.error('Error updating config file:', error)
+        return { success: false, error: String(error) }
+      }
     })
   }
 

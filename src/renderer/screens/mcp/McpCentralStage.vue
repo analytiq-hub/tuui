@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
 import { useMcpStore } from '@/renderer/store/mcp'
 import { openExternal } from '@/renderer/utils'
 import McpResourcePage from '@/renderer/components/pages/McpResourcePage.vue'
 import McpPromptPage from '@/renderer/components/pages/McpPromptPage.vue'
+
 const mcpStore = useMcpStore()
+const configContent = ref('')
+const isLoading = ref(false)
+const saveStatus = ref('')
+const editorHeight = ref('500px')
 
 const mcpNews = [
   {
@@ -27,10 +33,110 @@ const mcpNews = [
 const handleOpenLink = async (link: string): Promise<void> => {
   await openExternal(link)
 }
+
+// Config editor functions
+const loadConfig = async () => {
+  isLoading.value = true
+  try {
+    const config = await window.configFileApi.getConfig()
+    configContent.value = config
+    // Format JSON for better readability
+    try {
+      const parsed = JSON.parse(config)
+      configContent.value = JSON.stringify(parsed, null, 2)
+    } catch (e) {
+      // If parsing fails, keep the original content
+      console.error('Error parsing JSON:', e)
+    }
+  } catch (error) {
+    console.error('Failed to load config file:', error)
+    configContent.value = '{\n  "error": "Failed to load configuration"\n}'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const saveConfig = async () => {
+  try {
+    // Validate JSON
+    JSON.parse(configContent.value)
+
+    saveStatus.value = 'Saving...'
+    const result = await window.configFileApi.updateConfig(configContent.value)
+
+    if (result.success) {
+      saveStatus.value = 'Config saved successfully!'
+      setTimeout(() => {
+        saveStatus.value = ''
+      }, 3000)
+    } else {
+      saveStatus.value = `Error: ${result.error || 'Unknown error'}`
+      setTimeout(() => {
+        saveStatus.value = ''
+      }, 5000)
+    }
+  } catch (error) {
+    saveStatus.value = 'Invalid JSON. Please fix syntax errors before saving.'
+    setTimeout(() => {
+      saveStatus.value = ''
+    }, 5000)
+  }
+}
+
+// Load config when initially mounted and the config is selected
+onMounted(() => {
+  if (mcpStore.selected[0] === 'config') {
+    loadConfig()
+  }
+})
+
+// Watch for changes to the selected item and load config when 'config' is selected
+watch(() => mcpStore.selected, (newSelected) => {
+  if (newSelected[0] === 'config') {
+    loadConfig()
+  }
+}, { deep: true })
 </script>
 
 <template>
-  <div v-if="mcpStore.getSelected">
+  <!-- Config Editor Section -->
+  <div v-if="mcpStore.selected[0] === 'config'">
+    <v-card class="fill-height">
+      <v-card-title>
+        MCP Server Configuration
+        <v-chip v-if="saveStatus" class="ml-2" :color="saveStatus.includes('Error') ? 'error' : 'success'" size="small">
+          {{ saveStatus }}
+        </v-chip>
+      </v-card-title>
+      <v-card-subtitle>
+        Edit the configuration file and click Save to apply changes. Restart the application for changes to take effect.
+      </v-card-subtitle>
+      <v-card-text>
+        <div v-if="isLoading" class="d-flex justify-center align-center my-4">
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
+        </div>
+        <div v-else>
+          <v-textarea
+            v-model="configContent"
+            :rows="15"
+            auto-grow
+            class="font-monospace"
+            bg-color="grey-darken-4"
+            color="primary"
+            variant="outlined"
+            hint="This is JSON format. Be careful with syntax."
+          ></v-textarea>
+          <div class="d-flex justify-end mt-3">
+            <v-btn color="primary" class="mr-2" @click="loadConfig">Reload</v-btn>
+            <v-btn color="success" @click="saveConfig">Save Configuration</v-btn>
+          </div>
+        </div>
+      </v-card-text>
+    </v-card>
+  </div>
+
+  <!-- Original Content -->
+  <div v-else-if="mcpStore.getSelected">
     <div v-if="mcpStore.getSelected.primitive === 'tools'">
       <v-data-table
         :key="mcpStore.getSelected"
@@ -69,3 +175,9 @@ const handleOpenLink = async (link: string): Promise<void> => {
     </v-card>
   </div>
 </template>
+
+<style>
+.font-monospace {
+  font-family: "Courier New", monospace;
+}
+</style>
