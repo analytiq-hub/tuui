@@ -1,7 +1,6 @@
 import { app, WebContents, RenderProcessGoneDetails } from 'electron'
 import Constants from './utils/Constants'
 import { createErrorWindow, createMainWindow } from './MainRunner'
-import { setupContentSecurityPolicy } from './security'
 
 let mainWindow
 let errorWindow
@@ -16,7 +15,6 @@ app.on('ready', async () => {
     systemPreferences.setUserDefault('NSDisabledCharacterPaletteMenuItem', 'boolean', true)
   }
   */
-  setupContentSecurityPolicy()
   mainWindow = await createMainWindow()
 })
 
