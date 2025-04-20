@@ -2,6 +2,9 @@ import { app, WebContents, RenderProcessGoneDetails } from 'electron'
 import Constants from './utils/Constants'
 import { createErrorWindow, createMainWindow } from './MainRunner'
 
+// Disable Electron security warnings
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true'
+
 let mainWindow
 let errorWindow
 
