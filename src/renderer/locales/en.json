@@ -1,10 +1,10 @@
 {
   "desc": {},
   "title": {
-    "main": "MCP Screen",
-    "chat": "Chat Screen",
-    "agent": "Agent Screen",
-    "setting": "Setting Screen",
+    "main": "MCP Config",
+    "chat": "Chat",
+    "agent": "Agent Config",
+    "setting": "LLM Config",
     "error": "Unknown Error"
   },
   "menu": {
