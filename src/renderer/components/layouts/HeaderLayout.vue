@@ -64,7 +64,7 @@ watchEffect(() => {
 
       <v-btn data-testid="btn-menu-mcp" @click="handleRoute('/mcp')">
         <v-icon>mdi-view-dashboard</v-icon>
-        <span>MCP</span>
+        <span>MCP Servers</span>
       </v-btn>
     </v-btn-toggle>
 

@@ -1,10 +1,10 @@
 {
   "desc": {},
   "title": {
-    "mcp": "MCP Config",
     "chat": "Chat",
-    "agent": "Agent Config",
-    "setting": "LLM Config",
+    "agent": "Agents",
+    "setting": "LLMs",
+    "mcp": "MCP Servers",
     "error": "Unknown Error"
   },
   "menu": {
