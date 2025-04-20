@@ -48,8 +48,6 @@
     "localforage": "^1.10.0",
     "md-editor-v3": "^5.4.5",
     "monaco-editor": "^0.52.2",
-    "monaco-editor-vue3": "^0.1.10",
-    "monaco-editor-webpack-plugin": "^7.1.0",
     "pinia": "^3.0.2",
     "pinia-plugin-state-persistence": "^1.10.1",
     "uuid": "^11.1.0",
