@@ -101,7 +101,7 @@ function handleNameUpdate() {
 </script>
 
 <template>
-  <v-div v-if="agentStore.getRevised" :key="agentStore.getRevised">
+  <div v-if="agentStore.getRevised" :key="agentStore.getRevised">
     <v-card :title="$t('agent.config')">
       <v-divider></v-divider>
       <v-text-field
@@ -205,5 +205,5 @@ function handleNameUpdate() {
       <v-btn @click="console.log(agentStore.selected)"></v-btn>
     </template> -->
     </v-card>
-  </v-div>
+  </div>
 </template>
