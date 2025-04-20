@@ -1,7 +1,7 @@
 {
   "desc": {},
   "title": {
-    "main": "MCP 界面",
+    "mcp": "MCP 界面",
     "chat": "聊天界面",
     "agent": "智能体界面",
     "setting": "设置界面",

@@ -8,7 +8,7 @@ export default createRouter({
       path: '/mcp',
       components: McpScreen,
       meta: {
-        titleKey: 'title.main'
+        titleKey: 'title.mcp'
       }
     },
     {

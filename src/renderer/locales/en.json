@@ -1,7 +1,7 @@
 {
   "desc": {},
   "title": {
-    "main": "MCP Config",
+    "mcp": "MCP Config",
     "chat": "Chat",
     "agent": "Agent Config",
     "setting": "LLM Config",
