@@ -8,7 +8,7 @@ const layoutStore = useLayoutStore()
 // const router = useRouter()
 // const route: any = useRoute()
 
-// const titleKey: string = (route?.meta?.titleKey || 'title.main') as string
+// const titleKey: string = (route?.meta?.titleKey || 'title.mcp') as string
 
 // const handleRoute = (path: string): void => {
 //   router.push(path)

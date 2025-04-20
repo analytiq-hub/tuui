@@ -12,7 +12,7 @@ export function useRouteFeatures() {
   }
 
   const titleKey = computed(() => {
-    return route.meta?.titleKey || 'title.main'
+    return route.meta?.titleKey || 'title.chat'
   })
 
   return { hasComponent, titleKey }
