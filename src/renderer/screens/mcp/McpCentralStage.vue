@@ -9,7 +9,6 @@ const mcpStore = useMcpStore()
 const configContent = ref('')
 const isLoading = ref(false)
 const saveStatus = ref('')
-const editorHeight = ref('500px')
 
 const mcpNews = [
   {
@@ -65,10 +64,33 @@ const saveConfig = async () => {
     const result = await window.configFileApi.updateConfig(configContent.value)
 
     if (result.success) {
-      saveStatus.value = 'Config saved successfully!'
-      setTimeout(() => {
-        saveStatus.value = ''
-      }, 3000)
+      saveStatus.value = 'Config saved, reloading MCP servers...'
+
+      try {
+        // First call a new IPC method to reload the MCP servers
+        const reloadResult = await window.configFileApi.reloadMcpServers()
+
+        if (reloadResult.success) {
+          saveStatus.value = 'Config saved and MCP servers reloaded successfully!'
+
+          // Wait a moment to show the success message before reloading
+          setTimeout(() => {
+            // Force reload the window to reflect changes in mcpServers
+            window.location.reload()
+          }, 1500)
+        } else {
+          saveStatus.value = `Config saved but failed to reload MCP servers: ${reloadResult.error || 'Unknown error'}`
+          setTimeout(() => {
+            saveStatus.value = ''
+          }, 5000)
+        }
+      } catch (error) {
+        console.error('Failed to reload MCP servers:', error)
+        saveStatus.value = 'Config saved but failed to reload MCP servers. Try restarting the app.'
+        setTimeout(() => {
+          saveStatus.value = ''
+        }, 5000)
+      }
     } else {
       saveStatus.value = `Error: ${result.error || 'Unknown error'}`
       setTimeout(() => {
@@ -76,7 +98,7 @@ const saveConfig = async () => {
       }, 5000)
     }
   } catch (error) {
-    saveStatus.value = 'Invalid JSON. Please fix syntax errors before saving.'
+    saveStatus.value = `Invalid JSON: ${error}. Please fix syntax errors before saving.`
     setTimeout(() => {
       saveStatus.value = ''
     }, 5000)

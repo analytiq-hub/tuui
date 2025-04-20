@@ -120,5 +120,6 @@ exposeAPIs()
 
 contextBridge.exposeInMainWorld('configFileApi', {
   getConfig: async () => await ipcRenderer.invoke('getConfigFile'),
-  updateConfig: async (content) => await ipcRenderer.invoke('updateConfigFile', content)
+  updateConfig: async (content) => await ipcRenderer.invoke('updateConfigFile', content),
+  reloadMcpServers: async () => await ipcRenderer.invoke('reloadMcpServers')
 })

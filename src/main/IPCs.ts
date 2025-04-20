@@ -4,6 +4,10 @@ import { Client, capabilitySchemas } from './mcp/types'
 import { readFileSync, writeFileSync } from 'fs'
 
 import { manageRequests } from './mcp/client'
+import { initClient } from './mcp/init'
+
+// Track registered handler names for cleanup
+const registeredHandlers = new Set<string>()
 
 /*
  * IPC Communications
@@ -56,13 +60,54 @@ export default class IPCs {
         return { success: false, error: String(error) }
       }
     })
+
+    // Update config file content and reload MCP servers
+    ipcMain.handle('reloadMcpServers', async () => {
+      try {
+        // Remove existing handlers
+        clearRegisteredHandlers()
+        
+        // Reinitialize MCP clients
+        const clients = await initClient()
+        
+        // Re-register IPC handlers for the new clients
+        const features = clients.map(({ name, client, capabilities }) => {
+          console.log('Reloaded capabilities:', name, '\n', capabilities)
+          return registerIpcHandlers(name, client, capabilities)
+        })
+        
+        // Update the exposed API
+        IPCs.initializeMCP(features)
+        
+        return { success: true }
+      } catch (error) {
+        console.error('Error reloading MCP servers:', error)
+        return { success: false, error: String(error) }
+      }
+    })
   }
 
   static initializeMCP(features): void {
+    // Clear previous handler if it exists
+    if (registeredHandlers.has('list-clients')) {
+      ipcMain.removeHandler('list-clients')
+      registeredHandlers.delete('list-clients')
+    }
+    
     ipcMain.handle('list-clients', () => {
       return features
     })
+    registeredHandlers.add('list-clients')
   }
+}
+
+// Helper function to clear all registered handlers
+function clearRegisteredHandlers() {
+  for (const handlerName of registeredHandlers) {
+    console.log(`Removing handler: ${handlerName}`)
+    ipcMain.removeHandler(handlerName)
+  }
+  registeredHandlers.clear()
 }
 
 export function registerIpcHandlers(
@@ -75,9 +120,20 @@ export function registerIpcHandlers(
   const registerHandler = (method: string, schema: any) => {
     const eventName = `${name}-${method}`
     console.log(`IPC Main ${eventName}`)
+    
+    // Remove existing handler if it exists
+    if (registeredHandlers.has(eventName)) {
+      ipcMain.removeHandler(eventName)
+      registeredHandlers.delete(eventName)
+    }
+    
     ipcMain.handle(eventName, async (event, params) => {
       return await manageRequests(client, `${method}`, schema, params)
     })
+    
+    // Track this handler
+    registeredHandlers.add(eventName)
+    
     return eventName
   }
 
