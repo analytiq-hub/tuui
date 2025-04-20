@@ -67,69 +67,77 @@ const copyToClipboard = async (msg: Message) => {
 }
 </script>
 <template>
-  <v-hover open-delay="100">
-    <template #default="{ isHovering, props: hoverProps }">
-      <v-card v-bind="hoverProps" :elevation="isHovering ? 4 : 2" width="100vw" max-width="100%">
-        <slot :showcontent="showcontent" :showmodify="showmodify" />
-        <v-expand-transition>
-          <div v-if="isHovering">
-            <v-divider />
-            <v-card-actions>
-              <!-- Copy Button -->
-              <v-btn
-                v-if="showCopy"
-                color="primary"
-                icon="mdi-content-copy"
-                size="x-small"
-                variant="plain"
-                @click="copyToClipboard(messages[index])"
-              />
+  <div class="chat-card-wrapper" :class="$attrs.class">
+    <v-hover open-delay="100">
+      <template #default="{ isHovering, props: hoverProps }">
+        <v-card v-bind="hoverProps" :elevation="isHovering ? 4 : 2" width="100vw" max-width="100%">
+          <slot :showcontent="showcontent" :showmodify="showmodify" />
+          <v-expand-transition>
+            <div v-if="isHovering">
+              <v-divider />
+              <v-card-actions>
+                <!-- Copy Button -->
+                <v-btn
+                  v-if="showCopy"
+                  color="primary"
+                  icon="mdi-content-copy"
+                  size="x-small"
+                  variant="plain"
+                  @click="copyToClipboard(messages[index])"
+                />
 
-              <!-- Modify Button -->
-              <v-btn
-                v-if="showModify"
-                color="primary"
-                :icon="showmodify ? 'mdi-check-bold' : 'mdi-lead-pencil'"
-                size="x-small"
-                variant="plain"
-                @click="showmodify = !showmodify"
-              />
+                <!-- Modify Button -->
+                <v-btn
+                  v-if="showModify"
+                  color="primary"
+                  :icon="showmodify ? 'mdi-check-bold' : 'mdi-lead-pencil'"
+                  size="x-small"
+                  variant="plain"
+                  @click="showmodify = !showmodify"
+                />
 
-              <!-- Content Toggle Button -->
-              <v-btn
-                v-if="showContent"
-                color="primary"
-                :icon="showcontent ? 'mdi-eye-remove' : 'mdi-eye'"
-                size="x-small"
-                variant="plain"
-                @click="showcontent = !showcontent"
-              />
+                <!-- Content Toggle Button -->
+                <v-btn
+                  v-if="showContent"
+                  color="primary"
+                  :icon="showcontent ? 'mdi-eye-remove' : 'mdi-eye'"
+                  size="x-small"
+                  variant="plain"
+                  @click="showcontent = !showcontent"
+                />
 
-              <v-spacer />
+                <v-spacer />
 
-              <!-- Reduce Button -->
-              <v-btn
-                v-if="showReduce && index > 0"
-                color="error"
-                icon="mdi-format-align-top"
-                size="x-small"
-                variant="plain"
-                @click="emitDeleteMessageRange"
-              />
+                <!-- Reduce Button -->
+                <v-btn
+                  v-if="showReduce && index > 0"
+                  color="error"
+                  icon="mdi-format-align-top"
+                  size="x-small"
+                  variant="plain"
+                  @click="emitDeleteMessageRange"
+                />
 
-              <!-- Delete Button -->
-              <v-btn
-                v-if="showDelete"
-                color="error"
-                icon="mdi-delete-off-outline"
-                size="x-small"
-                variant="plain"
-                @click="emitDeleteMessage"
-              />
-            </v-card-actions>
-          </div>
-        </v-expand-transition>
-      </v-card>
-    </template>
-  </v-hover>
+                <!-- Delete Button -->
+                <v-btn
+                  v-if="showDelete"
+                  color="error"
+                  icon="mdi-delete-off-outline"
+                  size="x-small"
+                  variant="plain"
+                  @click="emitDeleteMessage"
+                />
+              </v-card-actions>
+            </div>
+          </v-expand-transition>
+        </v-card>
+      </template>
+    </v-hover>
+  </div>
 </template>
+
+<style scoped>
+.chat-card-wrapper {
+  width: 100%;
+}
+</style>

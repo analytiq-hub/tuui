@@ -49,7 +49,7 @@ export const createCompletion = async (rawconversation) => {
 
   const conversation = rawconversation.reduce((newConversation, item) => {
     if (item.role === 'assistant') {
-      const { _reasoningContent, ...rest } = item
+      const { reasoning_content, ...rest } = item
       newConversation.push(rest)
     }
     // (item.role === "user" && item.content[0].type === "image_url") {
@@ -242,6 +242,7 @@ const parseChoice = (choice, target) => {
       } else if (typeof choice.content === 'string') {
         target.content += choice.content
       } else if (typeof choice.reasoning_content === 'string') {
+        if (!target.reasoning_content) target.reasoning_content = ''
         target.reasoning_content += choice.reasoning_content
       }
       parseTool(choice.tool_calls, target)
