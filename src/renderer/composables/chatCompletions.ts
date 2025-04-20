@@ -104,12 +104,15 @@ export const createCompletion = async (rawconversation) => {
       body: JSON.stringify(body)
     }
 
+    // Log the request
+    console.log(`Request body: ${request.body}`)
+
     const completion = await fetch(
       chatbotStore.url + (chatbotStore.path ? chatbotStore.path : ''),
       request
     )
 
-    console.log(completion)
+    console.log(`Completion: ${JSON.stringify(completion)}`)
 
     // Handle errors
     if (!completion.ok) {
@@ -160,6 +163,7 @@ const read = async (reader, target, buffer, stream) => {
   // If the stream is done reading, release the lock on the reader
   if (done || !messageStore.generating) {
     messageStore.generating = false
+    console.log(`Complete response: ${JSON.stringify(target)}`)
     return reader.releaseLock()
   }
   // Convert the stream of bytes into a string
