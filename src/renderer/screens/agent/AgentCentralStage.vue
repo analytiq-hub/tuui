@@ -128,7 +128,7 @@ function handleNameUpdate() {
               class="mx-2 mt-2"
               auto-grow
               variant="solo-filled"
-              :error-messages="isPristine || 'Please save'"
+              :error-messages="isPristine ? 'Please save' : ''"
             ></v-textarea>
           </template>
           <template #actions>
