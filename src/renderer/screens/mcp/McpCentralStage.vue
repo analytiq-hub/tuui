@@ -105,11 +105,13 @@ const saveConfig = async () => {
   }
 }
 
-// Load config when initially mounted and the config is selected
+// Set the selected value to 'config' by default when component is mounted
 onMounted(() => {
-  if (mcpStore.selected[0] === 'config') {
-    loadConfig()
-  }
+  // Set selection to config
+  mcpStore.selected = ['config']
+
+  // Load the config
+  loadConfig()
 })
 
 // Watch for changes to the selected item and load config when 'config' is selected
@@ -157,7 +159,7 @@ watch(() => mcpStore.selected, (newSelected) => {
     </v-card>
   </div>
 
-  <!-- Original Content -->
+  <!-- Original Content (only shown if config is not selected) -->
   <div v-else-if="mcpStore.getSelected">
     <div v-if="mcpStore.getSelected.primitive === 'tools'">
       <v-data-table
