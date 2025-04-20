@@ -73,7 +73,7 @@ export const createMainWindow = async (): Promise<BrowserWindow> => {
   const mainWindow = new BrowserWindow(opt)
 
   // This will disable dev-tool as well
-  mainWindow.setMenu(null)
+  //mainWindow.setMenu(null)
 
   mainWindow.on('close', (event: Event): void => {
     event.preventDefault()
