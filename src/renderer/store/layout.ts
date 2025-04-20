@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia'
 
-export type RoutePath = '/' | '/chat' | '/agent' | '/setting'
+export type RoutePath = '/mcp' | '/chat' | '/agent' | '/setting'
 
 const PATH_TO_SCREEN = {
-  '/': 0,
+  '/mcp': 0,
   '/chat': 1,
   '/agent': 2,
   '/setting': 3

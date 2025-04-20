@@ -5,7 +5,7 @@ export default createRouter({
   history: createWebHashHistory(),
   routes: [
     {
-      path: '/',
+      path: '/mcp',
       components: McpScreen,
       meta: {
         titleKey: 'title.main'
@@ -40,8 +40,12 @@ export default createRouter({
       }
     },
     {
+      path: '/',
+      redirect: '/mcp'
+    },
+    {
       path: '/:pathMatch(.*)*',
-      redirect: '/'
+      redirect: '/mcp'
     }
   ]
 })
