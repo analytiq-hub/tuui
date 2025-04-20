@@ -3,10 +3,10 @@ import { defineStore } from 'pinia'
 export type RoutePath = '/mcp' | '/chat' | '/agent' | '/setting'
 
 const PATH_TO_SCREEN = {
-  '/mcp': 0,
-  '/chat': 1,
-  '/agent': 2,
-  '/setting': 3
+  '/chat': 0,
+  '/agent': 1,
+  '/setting': 2,
+  '/mcp': 3
 } as Record<RoutePath, number>
 
 type ScreenKey = keyof typeof PATH_TO_SCREEN

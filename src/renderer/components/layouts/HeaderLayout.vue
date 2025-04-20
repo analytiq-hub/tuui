@@ -47,10 +47,6 @@ watchEffect(() => {
       variant="text"
       base-color="white"
     >
-      <v-btn data-testid="btn-menu-mcp" @click="handleRoute('/')">
-        <v-icon>mdi-view-dashboard</v-icon>
-      </v-btn>
-
       <v-btn data-testid="btn-menu-chat" @click="handleRoute('/chat')">
         <v-icon>mdi-comment-text-outline</v-icon>
       </v-btn>
@@ -61,6 +57,10 @@ watchEffect(() => {
 
       <v-btn data-testid="btn-menu-setting" @click="handleRoute('/setting')">
         <v-icon>mdi-cog-transfer-outline</v-icon>
+      </v-btn>
+
+      <v-btn data-testid="btn-menu-mcp" @click="handleRoute('/mcp')">
+        <v-icon>mdi-view-dashboard</v-icon>
       </v-btn>
     </v-btn-toggle>
 

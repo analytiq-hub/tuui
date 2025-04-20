@@ -41,11 +41,11 @@ export default createRouter({
     },
     {
       path: '/',
-      redirect: '/mcp'
+      redirect: '/chat'
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/mcp'
+      redirect: '/chat'
     }
   ]
 })
