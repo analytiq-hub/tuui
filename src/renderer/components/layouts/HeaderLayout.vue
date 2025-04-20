@@ -49,18 +49,22 @@ watchEffect(() => {
     >
       <v-btn data-testid="btn-menu-chat" @click="handleRoute('/chat')">
         <v-icon>mdi-comment-text-outline</v-icon>
+        <span>Chat</span>
       </v-btn>
 
       <v-btn data-testid="btn-menu-agent" @click="handleRoute('/agent')">
         <v-icon>mdi-account-multiple</v-icon>
+        <span>Agents</span>
       </v-btn>
 
       <v-btn data-testid="btn-menu-setting" @click="handleRoute('/setting')">
         <v-icon>mdi-cog-transfer-outline</v-icon>
+        <span>LLMs</span>
       </v-btn>
 
       <v-btn data-testid="btn-menu-mcp" @click="handleRoute('/mcp')">
         <v-icon>mdi-view-dashboard</v-icon>
+        <span>MCP</span>
       </v-btn>
     </v-btn-toggle>
 
