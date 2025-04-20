@@ -1,7 +1,7 @@
 import { Client } from './types'
 import { Notification } from 'electron'
 import { initializeClient } from './client'
-import { readConfig } from './config'
+import { readConfig, ensureConfigExists } from './config'
 import Constants from '../utils/Constants'
 
 interface ClientObj {
@@ -11,6 +11,9 @@ interface ClientObj {
 }
 
 export async function initClient(): Promise<ClientObj[]> {
+  // First, ensure config file exists by copying from template if necessary
+  ensureConfigExists(Constants.ASSETS_PATH.config, Constants.ASSETS_PATH.configTemplate)
+  
   const config = readConfig(Constants.ASSETS_PATH.config)
   if (config) {
     console.log('Config loaded:', config)
