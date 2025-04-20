@@ -77,7 +77,13 @@ export default defineConfig(({ mode }) => {
       outDir: resolve('./dist')
     },
     plugins: [
-      Vue(),
+      Vue({
+        template: {
+          compilerOptions: {
+            isCustomElement: (tag) => ['iconify-icon', 'v-list-item-content'].includes(tag)
+          }
+        }
+      }),
       VueJsx(),
       // Docs: https://github.com/vuetifyjs/vuetify-loader
       VuetifyPlugin({
