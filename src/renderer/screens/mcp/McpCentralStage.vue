@@ -235,8 +235,8 @@ onUnmounted(() => {
         <div v-else class="editor-container">
           <div ref="editorContainer" class="monaco-editor-container"></div>
           <div class="d-flex justify-end mt-3">
-            <v-btn color="primary" class="mr-2" @click="loadConfig">Reload</v-btn>
-            <v-btn color="success" @click="saveConfig">Save Configuration</v-btn>
+            <v-btn color="primary" class="mr-2" @click="loadConfig">Discard</v-btn>
+            <v-btn color="success" @click="saveConfig">Save</v-btn>
           </div>
         </div>
       </v-card-text>
