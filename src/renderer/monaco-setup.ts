@@ -1,26 +1,21 @@
 import * as monaco from 'monaco-editor';
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-// @ts-ignore
+// Use URLs instead of direct imports
 self.MonacoEnvironment = {
   getWorker(_, label) {
     if (label === 'json') {
-      return new jsonWorker();
+      return new Worker(new URL('monaco-editor/esm/vs/language/json/json.worker', import.meta.url), { type: 'module' });
     }
     if (label === 'css' || label === 'scss' || label === 'less') {
-      return new cssWorker();
+      return new Worker(new URL('monaco-editor/esm/vs/language/css/css.worker', import.meta.url), { type: 'module' });
     }
     if (label === 'html' || label === 'handlebars' || label === 'razor') {
-      return new htmlWorker();
+      return new Worker(new URL('monaco-editor/esm/vs/language/html/html.worker', import.meta.url), { type: 'module' });
     }
     if (label === 'typescript' || label === 'javascript') {
-      return new tsWorker();
+      return new Worker(new URL('monaco-editor/esm/vs/language/typescript/ts.worker', import.meta.url), { type: 'module' });
     }
-    return new editorWorker();
+    return new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker', import.meta.url), { type: 'module' });
   },
   globalAPI: true
 };
