@@ -6,17 +6,6 @@ import McpResourcePage from '@/renderer/components/pages/McpResourcePage.vue'
 import McpPromptPage from '@/renderer/components/pages/McpPromptPage.vue'
 import monaco from '@/renderer/monaco-setup'
 
-// Add to top of McpCentralStage.vue (before the script setup) or in a separate .d.ts file
-declare global {
-  interface Window {
-    configFileApi: {
-      getConfig: () => Promise<string>;
-      updateConfig: (_config: string) => Promise<{ success: boolean; error?: string }>;
-      reloadMcpServers: () => Promise<{ success: boolean; error?: string }>;
-    }
-  }
-}
-
 const mcpStore = useMcpStore()
 const configContent = ref('')
 const isLoading = ref(false)
