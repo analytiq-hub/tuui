@@ -1,14 +1,28 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useMcpStore } from '@/renderer/store/mcp'
 import { openExternal } from '@/renderer/utils'
 import McpResourcePage from '@/renderer/components/pages/McpResourcePage.vue'
 import McpPromptPage from '@/renderer/components/pages/McpPromptPage.vue'
+import monaco from '@/renderer/monaco-setup'
+
+// Add to top of McpCentralStage.vue (before the script setup) or in a separate .d.ts file
+declare global {
+  interface Window {
+    configFileApi: {
+      getConfig: () => Promise<string>;
+      updateConfig: (_config: string) => Promise<{ success: boolean; error?: string }>;
+      reloadMcpServers: () => Promise<{ success: boolean; error?: string }>;
+    }
+  }
+}
 
 const mcpStore = useMcpStore()
 const configContent = ref('')
 const isLoading = ref(false)
 const saveStatus = ref('')
+const editorContainer = ref<HTMLElement | null>(null)
+let editor: monaco.editor.IStandaloneCodeEditor | null = null
 
 const mcpNews = [
   {
@@ -47,6 +61,19 @@ const loadConfig = async () => {
       // If parsing fails, keep the original content
       console.error('Error parsing JSON:', e)
     }
+
+    // Dispose old editor
+    if (editor) {
+      editor.dispose()
+      editor = null
+    }
+
+    // Wait for Vue to update the DOM before creating a new editor
+    setTimeout(() => {
+      if (editorContainer.value) {
+        initMonacoEditor()
+      }
+    }, 100)
   } catch (error) {
     console.error('Failed to load config file:', error)
     configContent.value = '{\n  "error": "Failed to load configuration"\n}'
@@ -55,8 +82,59 @@ const loadConfig = async () => {
   }
 }
 
+// Ensure the Monaco editor layout is updated when container is visible
+const updateEditorLayout = () => {
+  if (editor) {
+    editor.layout()
+  }
+}
+
+const initMonacoEditor = () => {
+  // Make sure container is available and destroy previous instance if it exists
+  if (editorContainer.value) {
+    if (editor) {
+      editor.dispose()
+    }
+
+    // Create the editor
+    editor = monaco.editor.create(editorContainer.value, {
+      value: configContent.value,
+      language: 'json',
+      theme: 'vs',
+      automaticLayout: true,
+      minimap: {
+        enabled: false
+      },
+      scrollBeyondLastLine: false,
+      lineNumbers: 'on',
+      tabSize: 2
+    })
+
+    // Update configContent when editor content changes
+    if (editor) {
+      editor.onDidChangeModelContent(() => {
+        if (editor) {
+          configContent.value = editor.getValue()
+        }
+      })
+
+      // Force a layout update after a short delay to ensure proper rendering
+      setTimeout(() => {
+        if (editor) {
+          editor.layout()
+        }
+      }, 100)
+    }
+  }
+}
+
 const saveConfig = async () => {
   try {
+    // Get content from editor if it exists
+    if (editor) {
+      configContent.value = editor.getValue()
+    }
+
     // Validate JSON
     JSON.parse(configContent.value)
 
@@ -112,14 +190,40 @@ onMounted(() => {
 
   // Load the config
   loadConfig()
+
+  // Initialize Monaco editor after config is loaded and DOM is updated
+  nextTick(() => {
+    setTimeout(() => {
+      initMonacoEditor()
+    }, 0)
+  })
 })
 
 // Watch for changes to the selected item and load config when 'config' is selected
 watch(() => mcpStore.selected, (newSelected) => {
   if (newSelected[0] === 'config') {
     loadConfig()
+    // Initialize editor if not already done
+    nextTick(() => {
+      if (!editor && editorContainer.value) {
+        setTimeout(() => {
+          initMonacoEditor()
+        }, 0)
+      } else {
+        // If editor exists, update its layout
+        updateEditorLayout()
+      }
+    })
   }
 }, { deep: true })
+
+// Clean up the editor when component is unmounted
+onUnmounted(() => {
+  if (editor) {
+    editor.dispose()
+    editor = null
+  }
+})
 </script>
 
 <template>
@@ -139,17 +243,8 @@ watch(() => mcpStore.selected, (newSelected) => {
         <div v-if="isLoading" class="d-flex justify-center align-center my-4">
           <v-progress-circular indeterminate color="primary"></v-progress-circular>
         </div>
-        <div v-else>
-          <v-textarea
-            v-model="configContent"
-            :rows="15"
-            auto-grow
-            class="font-monospace"
-            bg-color="grey-darken-4"
-            color="primary"
-            variant="outlined"
-            hint="This is JSON format. Be careful with syntax."
-          ></v-textarea>
+        <div v-else class="editor-container">
+          <div ref="editorContainer" class="monaco-editor-container"></div>
           <div class="d-flex justify-end mt-3">
             <v-btn color="primary" class="mr-2" @click="loadConfig">Reload</v-btn>
             <v-btn color="success" @click="saveConfig">Save Configuration</v-btn>
@@ -203,5 +298,20 @@ watch(() => mcpStore.selected, (newSelected) => {
 <style>
 .font-monospace {
   font-family: "Courier New", monospace;
+}
+
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.monaco-editor-container {
+  width: 100%;
+  height: 400px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
 }
 </style>
