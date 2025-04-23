@@ -13,7 +13,7 @@ interface ClientObj {
 export async function initClient(): Promise<ClientObj[]> {
   // First, ensure config file exists by copying from template if necessary
   ensureConfigExists(Constants.ASSETS_PATH.config, Constants.ASSETS_PATH.configTemplate)
-  
+
   const config = readConfig(Constants.ASSETS_PATH.config)
   if (config) {
     console.log('Config loaded:', config)

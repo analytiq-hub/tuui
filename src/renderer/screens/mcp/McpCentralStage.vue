@@ -189,22 +189,26 @@ onMounted(() => {
 })
 
 // Watch for changes to the selected item and load config when 'config' is selected
-watch(() => mcpStore.selected, (newSelected) => {
-  if (newSelected[0] === 'config') {
-    loadConfig()
-    // Initialize editor if not already done
-    nextTick(() => {
-      if (!editor && editorContainer.value) {
-        setTimeout(() => {
-          initMonacoEditor()
-        }, 0)
-      } else {
-        // If editor exists, update its layout
-        updateEditorLayout()
-      }
-    })
-  }
-}, { deep: true })
+watch(
+  () => mcpStore.selected,
+  (newSelected) => {
+    if (newSelected[0] === 'config') {
+      loadConfig()
+      // Initialize editor if not already done
+      nextTick(() => {
+        if (!editor && editorContainer.value) {
+          setTimeout(() => {
+            initMonacoEditor()
+          }, 0)
+        } else {
+          // If editor exists, update its layout
+          updateEditorLayout()
+        }
+      })
+    }
+  },
+  { deep: true }
+)
 
 // Clean up the editor when component is unmounted
 onUnmounted(() => {
@@ -221,12 +225,18 @@ onUnmounted(() => {
     <v-card class="fill-height">
       <v-card-title>
         MCP Server Configuration
-        <v-chip v-if="saveStatus" class="ml-2" :color="saveStatus.includes('Error') ? 'error' : 'success'" size="small">
+        <v-chip
+          v-if="saveStatus"
+          class="ml-2"
+          :color="saveStatus.includes('Error') ? 'error' : 'success'"
+          size="small"
+        >
           {{ saveStatus }}
         </v-chip>
       </v-card-title>
       <v-card-subtitle>
-        Edit the configuration file and click Save to apply changes. Restart the application for changes to take effect.
+        Edit the configuration file and click Save to apply changes. Restart the application for
+        changes to take effect.
       </v-card-subtitle>
       <v-card-text>
         <div v-if="isLoading" class="d-flex justify-center align-center my-4">
@@ -286,7 +296,7 @@ onUnmounted(() => {
 
 <style>
 .font-monospace {
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
 }
 
 .editor-container {

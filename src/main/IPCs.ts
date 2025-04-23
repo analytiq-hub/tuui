@@ -66,19 +66,19 @@ export default class IPCs {
       try {
         // Remove existing handlers
         clearRegisteredHandlers()
-        
+
         // Reinitialize MCP clients
         const clients = await initClient()
-        
+
         // Re-register IPC handlers for the new clients
         const features = clients.map(({ name, client, capabilities }) => {
           console.log('Reloaded capabilities:', name, '\n', capabilities)
           return registerIpcHandlers(name, client, capabilities)
         })
-        
+
         // Update the exposed API
         IPCs.initializeMCP(features)
-        
+
         return { success: true }
       } catch (error) {
         console.error('Error reloading MCP servers:', error)
@@ -93,7 +93,7 @@ export default class IPCs {
       ipcMain.removeHandler('list-clients')
       registeredHandlers.delete('list-clients')
     }
-    
+
     ipcMain.handle('list-clients', () => {
       return features
     })
@@ -120,20 +120,20 @@ export function registerIpcHandlers(
   const registerHandler = (method: string, schema: any) => {
     const eventName = `${name}-${method}`
     console.log(`IPC Main ${eventName}`)
-    
+
     // Remove existing handler if it exists
     if (registeredHandlers.has(eventName)) {
       ipcMain.removeHandler(eventName)
       registeredHandlers.delete(eventName)
     }
-    
+
     ipcMain.handle(eventName, async (event, params) => {
       return await manageRequests(client, `${method}`, schema, params)
     })
-    
+
     // Track this handler
     registeredHandlers.add(eventName)
-    
+
     return eventName
   }
 

@@ -18,9 +18,7 @@ if (!mcpStore.selectedChips.config) {
       :active="mcpStore.selected[0] === 'config'"
       class="config-button mb-2"
     >
-      <v-list-item-title>
-        MCP Server Config
-      </v-list-item-title>
+      <v-list-item-title> MCP Server Config </v-list-item-title>
     </v-list-item>
 
     <v-divider class="mb-2"></v-divider>

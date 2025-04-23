@@ -8,7 +8,7 @@ import Vue from '@vitejs/plugin-vue'
 import { rmSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { builtinModules } from 'module'
-
+import * as monacoPlugin from 'vite-plugin-monaco-editor'
 const isDevEnv = process.env.NODE_ENV === 'development'
 
 export default defineConfig(({ mode }) => {
@@ -64,7 +64,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.vue', '.json', '.scss'],
       alias: {
-        '@': resolve(dirname(fileURLToPath(import.meta.url)), 'src')
+        '@': resolve(dirname(fileURLToPath(import.meta.url)), 'src'),
+        'monaco-editor': resolve(__dirname, 'node_modules/monaco-editor')
       }
     },
     base: './',
@@ -91,7 +92,16 @@ export default defineConfig(({ mode }) => {
       }),
       // Docs: https://github.com/electron-vite/vite-plugin-electron
       ElectronPlugin(electronPluginConfigs),
-      RendererPlugin()
+      RendererPlugin(),
+      monacoPlugin.default.default({
+        languageWorkers: ['json', 'css', 'html', 'typescript'],
+        customWorkers: [
+          {
+            label: 'editorWorkerService',
+            entry: 'monaco-editor/esm/vs/editor/editor.worker.js'
+          }
+        ]
+      })
     ]
   }
 })
